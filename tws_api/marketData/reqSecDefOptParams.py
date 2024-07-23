@@ -117,15 +117,31 @@ class TestApp(EWrapper, EClient):
         self.start()
         print(f"Next valid order ID: {orderId}")
 
+    def tickPrice(self, reqId, tickType, price, attrib):
+        super().tickPrice(reqId, tickType, price, attrib)
+        print(tickType, price)
+
     def securityDefinitionOptionParameter(self, reqId: int, exchange: str,
                                           underlyingConId: int, tradingClass: str, multiplier: str,
                                           expirations, strikes):
         super().securityDefinitionOptionParameter(reqId, exchange,
                                                   underlyingConId, tradingClass, multiplier, expirations, strikes)
-        for s in [5335, 5345, 5355, 5365]:
-            if s in strikes:
-                print(underlyingConId)
 
+        expirations = list(expirations)
+        strikes = list(strikes)
+        print(expirations)
+        contract = Contract()
+        contract.symbol = 'BMW'
+        contract.secType = 'OPT'
+        contract.exchange = exchange
+        contract.tradingClass = tradingClass
+        contract.multiplier = multiplier
+        contract.lastTradeDateOrContractMonth = expirations[0]
+        contract.strike = strikes[0]
+        contract.right = 'C'
+        self.reqMktData(self.nextValidOrderId, contract, "", False, False, [])
+        self.nextValidOrderId += 1
+        return
 
     def contractDetails(self, reqId: int, contractDetails):
         super().contractDetails(reqId, contractDetails)
@@ -133,21 +149,7 @@ class TestApp(EWrapper, EClient):
 
     def start(self):
         self.reqCurrentTime()
-        self.reqSecDefOptParams(self.nextValidOrderId, "ES", "CME", "IND", 11004968)
-
-        contract = Contract()
-        contract.symbol = "AMD"
-        contract.secType = "OPT"
-        contract.exchange = "SMART"
-#        contract.conId = 706165427
-#        contract.underlyingConId = 265598
-        contract.tradingClass = "AMD"
-        contract.multiplier = 100
-        contract.right = "C"
-        contract.lastTradeDateOrContractMonth = "20240614"
-        contract.strike = 95 
-        self.reqContractDetails(self.nextValidOrderId, contract)
-#        self.calculateOptionPrice(self.nextValidOrderId, contract, .2, 159.6, [])
+        self.reqSecDefOptParams(self.nextValidOrderId, "BMW", "", "STK", 14094)
 
     def stop(self):
         self.done = True
