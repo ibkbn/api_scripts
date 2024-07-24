@@ -47,7 +47,7 @@ class TestApp(EWrapper, EClient):
         print(delta, vega, gamma)
 
     def start(self):
-        contract = CustomContracts().bmwOption()
+        contract = CustomContracts().aaplContract()
         self.reqMktData(self.nextValidOrderId, contract, "", False, False, [])
 
 
