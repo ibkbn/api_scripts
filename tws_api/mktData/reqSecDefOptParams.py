@@ -5,6 +5,7 @@ import datetime
 from threading import Timer
 import ibapi
 import time
+import sys
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
 from ibapi.order import Order
@@ -21,77 +22,6 @@ from ibapi.utils import decimalMaxString, floatMaxString, intMaxString
     pair in response
 
 """
-
-g_strike = 0
-g_expiry = 0
-g_right = 0
-def usTechOpt(symbol, sec_type="OPT", currency="USD", exchange="CBOE"):
-    global g_right, g_expiry, g_strike
-    contract = Contract()
-    contract.symbol = symbol
-    contract.secType = sec_type
-    contract.currency = currency
-    contract.exchange = exchange
-    contract.strike = g_strike
-    contact.right = g_right
-    contract.lastTradeDateOrContractMonth = g_expiry
-    contract.multiplier = 100
-    contract.tradingClass = ""
-    return Contract
-
-def spx_contract(symbol="SPX", secType="OPT", currency="USD", exchange="CBOE"):
-    contract = Contract()
-    contract.symbol = symbol
-    contract.secType = secType
-    contract.currency = currency
-    contract.exchange = exchange
-    return contract
-
-def sample_contract():
-
-    contract = Contract()
-    contract.symbol = "AAPL"
-    contract.exchange = "SMART"
-    contract.currency = "USD"
-    contract.secType = "STK"
-    
-    return contract
-
-def spx_index():
-
-    contract = Contract()
-    contract.symbol = "SPX"
-    contract.secType = "IND"
-    contract.exchange = "CBOE" 
-    contract.currency = "USD"
-
-    return contract
-
-def spxw_opt():
-
-    contract = Contract()
-    contract.symbol = "SPX"
-    contract.secType = "OPT"
-    contract.exchange = "SMART"
-    contract.currency = "USD"
-    contract.tradingClass = "SPXW"
-    contract.multiplier = 100
-    contract.lastTradeDateOrContractMonth = "20230307"
-    contract.strike = 4100.0 
-
-    return contract
-
-def eminiContract():
-
-    contract = Contract()
-    contract.exchange = "CME"
-    contract.symbol = "NQM3"
-    contract.currency = "USD"
-    contract.secType= "FUT"
-    contract.multiplier = 20
-    contract.lastTradeDateOrContractMonth = "20230616"
-
-    return contract
 
 class TestApp(EWrapper, EClient):
 
@@ -117,10 +47,6 @@ class TestApp(EWrapper, EClient):
         self.start()
         print(f"Next valid order ID: {orderId}")
 
-    def tickPrice(self, reqId, tickType, price, attrib):
-        super().tickPrice(reqId, tickType, price, attrib)
-        print(tickType, price)
-
     def securityDefinitionOptionParameter(self, reqId: int, exchange: str,
                                           underlyingConId: int, tradingClass: str, multiplier: str,
                                           expirations, strikes):
@@ -129,19 +55,8 @@ class TestApp(EWrapper, EClient):
 
         expirations = list(expirations)
         strikes = list(strikes)
-        print(expirations)
-        contract = Contract()
-        contract.symbol = 'BMW'
-        contract.secType = 'OPT'
-        contract.exchange = exchange
-        contract.tradingClass = tradingClass
-        contract.multiplier = multiplier
-        contract.lastTradeDateOrContractMonth = expirations[0]
-        contract.strike = strikes[0]
-        contract.right = 'C'
-        self.reqMktData(self.nextValidOrderId, contract, "", False, False, [])
-        self.nextValidOrderId += 1
-        return
+        print('Expirations: ', expirations)
+        print('Strikes: ', strikes)
 
     def contractDetails(self, reqId: int, contractDetails):
         super().contractDetails(reqId, contractDetails)
@@ -149,7 +64,7 @@ class TestApp(EWrapper, EClient):
 
     def start(self):
         self.reqCurrentTime()
-        self.reqSecDefOptParams(self.nextValidOrderId, "BMW", "", "STK", 14094)
+        self.reqSecDefOptParams(self.nextValidOrderId, "AARTIIND", "", "STK", 56988365)
 
     def stop(self):
         self.done = True
