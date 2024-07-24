@@ -31,7 +31,7 @@ class TestApp(EWrapper, EClient):
 
 
     def error(self, reqId: int, errorCode: int, errorString: str,
-            advansedOrderreject):
+            advansedOrderreject=""):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
         error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
                         + f'Msg: {errorString}'
