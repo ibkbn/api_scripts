@@ -38,6 +38,7 @@ class TestApp(EWrapper, EClient):
         self.start()
 
     def start(self):
+      # Add requests here
         return
 
 
