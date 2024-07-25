@@ -45,41 +45,6 @@ class TestApp(EWrapper, EClient):
                 f"parentId: {parentId}, lastFillPrice: {lastFillPrice}," +\
                 f"clientId: {clientId}, whyHeld: {whyHeld}, mktCapPrice: {mktCapPrice}")
 
-    def placeAdjustedOrder(self):
-
-        contract = Contract()
-
-        contract.symbol = "BMW"
-        contract.exchange = "SMART"
-        contract.currency = "EUR"
-        contract.secType = 'STK'
-
-        order = Order()
-
-        order.action = 'BUY'
-        order.orderType = 'MKT'
-        order.totalQuantity = 1
-#        order.auxPrice = 108.55 
-        order.tif = 'DAY'
-
-        adjusted = Order()
-        adjusted.parentId = order.orderId
-        adjusted.orderId = order.orderId + 1
-        adjusted.action = "BUY"
-        adjusted.tif = "DAY"
-        adjusted.totalQuantity = 2
-        adjusted.triggerPrice = 175
-        adjusted.adjustedOrderType = "TRAIL LMT"
-        adjusted.adjustedStopLimitPrice = 105.6
-        adjusted.lmtPriceOffset = 1
-        adjusted.auxPrice = 3
-
-        orders = [order, adjusted]
-
-        orderid = self.nextValidOrderId
-        
-        for order in orders:
-            self.placeOrder(orderid, contract, order)
 
     def start(self):
 
@@ -113,9 +78,14 @@ class TestApp(EWrapper, EClient):
         orderLmtSell.lmtPrice = 64031.0
         orderLmtSell.totalQuantity = '0.00001562' 
         orderLmtSell.tif = 'IOC'
-        
 
-        self.placeOrder(self.nextValidOrderId, contract, orderMktSell)
+        orders = [orderMktBuy, orderMktSell, orderLmtBuy, orderLmtSell]
+        
+        orderId = self.nextValidOrderId
+        for o in orders:
+            self.placeOrder(orderId, contract, o)
+            orderId += 1
+        
 
     def stop(self):
         self.done = True
