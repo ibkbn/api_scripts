@@ -83,25 +83,39 @@ class TestApp(EWrapper, EClient):
 
     def start(self):
 
-        contract = CustomContracts().cryptoContract() 
-        orderMkt = Order()
-        orderMkt.action = 'BUY'
-        orderMkt.orderType = 'MKT'
-        orderMkt.cashQty = 1 
-        orderMkt.totalQuantity = 0
-        orderMkt.tif = 'IOC'
+        # BUY orders - must use cashQty (with totalQuantity=0)  &  TIF=IOC
+        # SELL orders - must use totalQuantity**  &  TIF=IOC -> if I use cashQty at all for sell orders I get "Error 10244 Cash Quantity cannot be used for this order"
 
-        orderLmt = Order()
-        orderLmt.action = 'BUY'
-        orderLmt.orderType = 'LMT'
-        orderLmt.lmtPrice = 64031.0
-        orderLmt.totalQuantity = '0.00001562' 
-        orderLmt.tif = 'IOC'
+        contract = CustomContracts().cryptoContract() 
+        orderMktBuy = Order()
+        orderMktBuy.action = 'BUY'
+        orderMktBuy.orderType = 'MKT'
+        orderMktBuy.cashQty = 1 
+        orderMktBuy.totalQuantity = 0
+        orderMktBuy.tif = 'IOC'
+        
+        orderMktSell = Order()
+        orderMktSell.action = 'SELL'
+        orderMktSell.orderType = 'MKT'
+        orderMktSell.totalQuantity = .1
+        orderMktSell.tif = 'IOC'
+
+        orderLmtBuy = Order()
+        orderLmtBuy.action = 'BUY'
+        orderLmtBuy.orderType = 'LMT'
+        orderLmtBuy.lmtPrice = 64031.0
+        orderLmtBuy.totalQuantity = '0.00001562' 
+        orderLmtBuy.tif = 'IOC'
+        
+        orderLmtSell = Order()
+        orderLmtSell.action = 'SELL'
+        orderLmtSell.orderType = 'LMT'
+        orderLmtSell.lmtPrice = 64031.0
+        orderLmtSell.totalQuantity = '0.00001562' 
+        orderLmtSell.tif = 'IOC'
         
 
-        self.placeOrder(self.nextValidOrderId, contract, orderLmt)
-        self.nextValidOrderId += 1
-        self.placeOrder(self.nextValidOrderId, contract, orderMkt)
+        self.placeOrder(self.nextValidOrderId, contract, orderMktSell)
 
     def stop(self):
         self.done = True
