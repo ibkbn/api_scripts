@@ -49,14 +49,19 @@ class TestApp(EWrapper, EClient):
 
     def start(self):
 
-        contract = CustomContracts().spxOpt() 
+        contract = Contract()
+
+        contract.secType = 'STK'
+        contract.currency = 'USD'
+        contract.exchange = 'NASDAQ'
+        contract.symbol = 'SMCI'
 
 #        endDate = '20231113 11:15:00 US/Eastern' 
         endDate =""
         self.reqHeadTimeStamp(self.nextValidOrderId, contract, whatToShow="TRADES", useRTH=True, formatDate=1)
         self.reqContractDetails(self.nextValidOrderId, contract)
         self.reqHistoricalData(self.nextValidOrderId, contract, endDate, 
-                '1 M', '1 min', 'TRADES', 0, 1, False, [])
+                '1 M', '1 min', 'MIDPOINT', 0, 1, False, [])
 
     def stop(self):
         self.done = True
@@ -65,7 +70,7 @@ class TestApp(EWrapper, EClient):
 def main():
     try:
         app = TestApp()
-        app.connect('192.168.43.222', 7496, clientId=1)
+        app.connect('192.168.0.106', 7496, clientId=1)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
         print(f'ibapi version: ', ibapi.__version__)
 #        Timer(15, app.stop).start()
